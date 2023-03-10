@@ -1,7 +1,10 @@
-
+import { Button } from "./components/antd";
 
 export default function Home() {
   return (
-    <div>ホーム</div>
+    <div>
+      ホーム
+      <Button type="primary">Primary Button</Button>
+    </div>
   );
 }
