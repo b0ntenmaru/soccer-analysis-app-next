@@ -1,14 +1,19 @@
 "use client";
 
-import { Layout, Menu, theme } from 'antd';
+import { Layout, Menu } from 'antd';
 const { Header, Content, Footer } = Layout;
 import 'antd/dist/reset.css';
+import styles from './AntdLayout.module.css';
+
+// const styles = {
+//   content: {
+//     width: '80%',
+//     margin: '0 auto',
+//     'margin-top': '16px',
+//   }
+// };
 
 export const AntdLayout = ({children}: {children: React.ReactNode}) => {
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-
   return (
     <Layout className="layout">
       <Header>
@@ -27,10 +32,8 @@ export const AntdLayout = ({children}: {children: React.ReactNode}) => {
           })}
         />
       </Header>
-      <Content style={{ padding: '0 50px', margin: '16px 0' }}>
-        <div className="site-layout-content" style={{ background: colorBgContainer }}>
-          {children}
-        </div>
+      <Content className={styles.container}>
+        {children}
       </Content>
       <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
     </Layout>
