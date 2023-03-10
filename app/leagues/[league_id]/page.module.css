@@ -1,0 +1,20 @@
+.league_profile {
+  display: flex;
+  align-items: center;
+}
+
+.league_profile_sub {
+  width: 226px;
+}
+
+.league_detail_header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.league_country {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
