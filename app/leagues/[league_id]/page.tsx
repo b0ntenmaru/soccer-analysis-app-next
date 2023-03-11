@@ -2,15 +2,15 @@
 import { Avatar, Card, Col, Progress, Row, Select } from '@/app/components/antd';
 import { GetSeasonStatsByIdData, League } from '@/app/types';
 import styles from '@/app/leagues/[league_id]/page.module.css';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const getLeague = async () => {
-  const res = await fetch('http://localhost:3000/api/leagues/2');
+  const res = await fetch('http://localhost:3000/api/leagues/564');
   const data = await res.json();
   return data as League;
 };
 
-const getLeagueSeasonStats = async (seasonId: number) => {
+const getSeasonStats = async (seasonId: number) => {
   const res = await fetch(`http://localhost:3000/api/seasons/${seasonId}/stats`);
   const data = await res.json();
   return data as GetSeasonStatsByIdData;
@@ -21,31 +21,47 @@ export default function Page() {
   const [seasonStats, setSeasonStats] = useState<GetSeasonStatsByIdData | null>(null);
   const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
 
-  getLeague().then((data) => {
-    setLeague(data);
-    setSelectedSeasonId(data.current_season_id);
-    getLeagueSeasonStats(data.current_season_id).then((data) => {
-      setSeasonStats(data);
+  useEffect(() => {
+    getLeague().then((leagueData) => {
+      setLeague(leagueData);
+      setSelectedSeasonId(leagueData.current_season_id);
+      getSeasonStats(leagueData.current_season_id).then((seasonStatsData) => {
+        setSeasonStats(seasonStatsData);
+      });
     });
-  });
+  }, []);
 
   const seasonProgressPercentage = useMemo(()=> {
     if (seasonStats === null) { return; }
 
     const statsData = seasonStats.stats.data;
-    return (statsData.number_of_matches_played / statsData.number_of_matches) * 100;
+    return Math.round((statsData.number_of_matches_played / statsData.number_of_matches) * 100);
   }, [seasonStats]);
+
+  const displaySeasons = useMemo(() => {
+    if (league === null) {
+      return;
+    }
+    const seasons =league.seasons.data.map(season => {
+      return {
+        value: season.id,
+        label: season.name
+      };
+    });
+
+    return seasons.reverse();
+
+  }, [league]);
 
   return (
     <>
-      {selectedSeasonId}
       <Row justify="space-between" style={{ marginBottom: '16px'}}>
         <Col span={24}>
           { league ? <Card bordered>
             <div className={styles.league_detail_header}>
               <div className={styles.league_profile}>
                 <div>
-                  <Avatar size={140} src={league.logo_path} />
+                  <Avatar size={140} src={league.logo_path} shape="square" />
                 </div>
                 <div className={styles.league_profile_sub}>
                   <div className={styles.league_country}>
@@ -53,21 +69,16 @@ export default function Page() {
                     <span>{league.country.data.name}</span>
                   </div>
                   <div>
-                    <Progress percent={30} />
+                    <Progress percent={seasonProgressPercentage} />
                   </div>
                 </div>
               </div>
 
               <div>
                 <Select
-                  defaultValue="lucy"
+                  defaultValue={selectedSeasonId}
                   style={{ width: 140 }}
-                  options={[
-                    { value: 'jack', label: 'Jack' },
-                    { value: 'lucy', label: 'Lucy' },
-                    { value: 'Yiminghe', label: 'yiminghe' },
-                    { value: 'disabled', label: 'Disabled' },
-                  ]}
+                  options={displaySeasons}
                 />
               </div>
             </div>
