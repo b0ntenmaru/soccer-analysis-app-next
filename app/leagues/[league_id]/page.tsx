@@ -4,8 +4,8 @@ import { GetSeasonStatsByIdData, League } from '@/app/types';
 import styles from '@/app/leagues/[league_id]/page.module.css';
 import { useEffect, useMemo, useState } from 'react';
 
-const getLeague = async () => {
-  const res = await fetch('http://localhost:3000/api/leagues/564');
+const getLeague = async (leagueId: number) => {
+  const res = await fetch(`http://localhost:3000/api/leagues/${leagueId}`);
   const data = await res.json();
   return data as League;
 };
@@ -16,20 +16,20 @@ const getSeasonStats = async (seasonId: number) => {
   return data as GetSeasonStatsByIdData;
 };
 
-export default function Page() {
+export default function Page({ params }: { params: { league_id: number }}) {
   const [league, setLeague] = useState<League | null>(null);
   const [seasonStats, setSeasonStats] = useState<GetSeasonStatsByIdData | null>(null);
   const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
 
   useEffect(() => {
-    getLeague().then((leagueData) => {
+    getLeague(params.league_id).then((leagueData) => {
       setLeague(leagueData);
       setSelectedSeasonId(leagueData.current_season_id);
       getSeasonStats(leagueData.current_season_id).then((seasonStatsData) => {
         setSeasonStats(seasonStatsData);
       });
     });
-  }, []);
+  }, [params.league_id]);
 
   const seasonProgressPercentage = useMemo(()=> {
     if (seasonStats === null) { return; }
