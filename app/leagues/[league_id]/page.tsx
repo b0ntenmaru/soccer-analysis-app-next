@@ -20,7 +20,6 @@ export default function Page({ params }: { params: { league_id: number }}) {
   const [league, setLeague] = useState<League | null>(null);
   const [seasonStats, setSeasonStats] = useState<GetSeasonStatsByIdData | null>(null);
   const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
-
   useEffect(() => {
     getLeague(params.league_id).then((leagueData) => {
       setLeague(leagueData);
@@ -29,7 +28,14 @@ export default function Page({ params }: { params: { league_id: number }}) {
         setSeasonStats(seasonStatsData);
       });
     });
-  }, [params.league_id]);
+  },[params.league_id]);
+
+  const handleChangeSeason = (value: number) => {
+    setSelectedSeasonId(value);
+    getSeasonStats(value).then((seasonStatsData) => {
+      setSeasonStats(seasonStatsData);
+    });
+  };
 
   const seasonProgressPercentage = useMemo(()=> {
     if (seasonStats === null) { return; }
@@ -79,6 +85,7 @@ export default function Page({ params }: { params: { league_id: number }}) {
                   defaultValue={selectedSeasonId}
                   style={{ width: 140 }}
                   options={displaySeasons}
+                  onChange={(e) => handleChangeSeason(e)}
                 />
               </div>
             </div>
