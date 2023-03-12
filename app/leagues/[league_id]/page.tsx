@@ -161,6 +161,7 @@ export default function Page({ params }: { params: { league_id: number }}) {
                   style={{ width: 140 }}
                   options={displaySeasons}
                   onChange={(e) => handleChangeSeason(e)}
+                  size="large"
                 />
               </div>
             </div>
