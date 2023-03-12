@@ -1,30 +1,23 @@
 "use client";
-import { Avatar, Card, Col, Progress, Row, Select } from '@/app/components/antd';
+
+import { Avatar, Card, Col, Progress, Row, Select, Statistic, Tabs, TabsProps } from '@/app/components/antd';
 import { GetSeasonStatsByIdData, League } from '@/app/types';
 import styles from '@/app/leagues/[league_id]/page.module.css';
 import { useEffect, useMemo, useState } from 'react';
-
-const getLeague = async (leagueId: number) => {
-  const res = await fetch(`http://localhost:3000/api/leagues/${leagueId}`);
-  const data = await res.json();
-  return data as League;
-};
-
-const getSeasonStats = async (seasonId: number) => {
-  const res = await fetch(`http://localhost:3000/api/seasons/${seasonId}/stats`);
-  const data = await res.json();
-  return data as GetSeasonStatsByIdData;
-};
+import { getLeagueById } from '@/app/leagues/[league_id]/getLeagueById';
+import { getSeasonStatsBySeasonId } from '@/app/leagues/[league_id]/getSeasonStatsBySeasonId';
+import '@/app/leagues/[league_id]/antd_orverride.css';
 
 export default function Page({ params }: { params: { league_id: number }}) {
   const [league, setLeague] = useState<League | null>(null);
   const [seasonStats, setSeasonStats] = useState<GetSeasonStatsByIdData | null>(null);
   const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
+
   useEffect(() => {
-    getLeague(params.league_id).then((leagueData) => {
+    getLeagueById(params.league_id).then((leagueData) => {
       setLeague(leagueData);
       setSelectedSeasonId(leagueData.current_season_id);
-      getSeasonStats(leagueData.current_season_id).then((seasonStatsData) => {
+      getSeasonStatsBySeasonId(leagueData.current_season_id).then((seasonStatsData) => {
         setSeasonStats(seasonStatsData);
       });
     });
@@ -32,7 +25,7 @@ export default function Page({ params }: { params: { league_id: number }}) {
 
   const handleChangeSeason = (value: number) => {
     setSelectedSeasonId(value);
-    getSeasonStats(value).then((seasonStatsData) => {
+    getSeasonStatsBySeasonId(value).then((seasonStatsData) => {
       setSeasonStats(seasonStatsData);
     });
   };
@@ -59,6 +52,84 @@ export default function Page({ params }: { params: { league_id: number }}) {
 
   }, [league]);
 
+  const [selectedTab, setSelectedTab] = useState<'summary' | 'stats'>('summary');
+
+  const tabItems: TabsProps['items'] = [
+    {
+      key: 'summary',
+      label: `サマリー`,
+    },
+    {
+      key: 'stats',
+      label: `スタッツ`,
+    },
+  ];
+
+  const seasonStatsData = useMemo(() => {
+    return seasonStats?.stats.data;
+  },[seasonStats?.stats.data]);
+
+  const seasonStatsItems = useMemo((): Array<{ label: string; data: string | number | undefined;}> => {
+    return [
+      {
+        label: '総得点数',
+        data: seasonStatsData?.number_of_goals
+      },
+      {
+        label: '1試合あたりの平均得点数',
+        data: seasonStatsData?.avg_goals_per_match
+      },
+      {
+        label: '1試合あたりのホーム平均得点数',
+        data: seasonStatsData?.avg_homegoals_per_match
+      },
+      {
+        label: '1試合あたりのアウェー平均得点数',
+        data: seasonStatsData?.avg_awaygoals_per_match
+      },
+      {
+        label: '1得点にかかる時間',
+        data: `${seasonStatsData?.goal_scored_every_minutes}分`
+      },
+      {
+        label: 'ホームチームの勝率',
+        data: `${seasonStatsData?.win_percentage.home}%`
+      },
+      {
+        label: 'アウェーチームの勝率',
+        data: `${seasonStatsData?.win_percentage.away}%`
+      },
+      {
+        label: '引き分け率',
+        data: `${seasonStatsData?.draw_percentage}%`
+      },
+      {
+        label: 'イエローカードの総数',
+        data: `${seasonStatsData?.number_of_yellowcards}枚`
+      },
+      {
+        label: '1試合あたりの平均イエローカード数',
+        data: `${seasonStatsData?.avg_yellowcards_per_match}枚`
+      },
+      {
+        label: '退場のきっかけとなるイエローカードの数',
+        data: `${seasonStatsData?.number_of_yellowredcards}枚`
+      },
+      {
+        label: '1試合あたりの退場のきっかけとなるイエローカード数の平均数',
+        data: `${seasonStatsData?.avg_yellowredcards_per_match}枚`
+      },
+      {
+        label: 'レッドカードの総数',
+        data: `${seasonStatsData?.number_of_redcards}枚`
+      },
+      {
+        label: '1試合あたりの平均レッドカード数',
+        data: `${seasonStatsData?.avg_redcards_per_match}枚`
+      }
+    ];
+  }, [seasonStatsData?.avg_awaygoals_per_match, seasonStatsData?.avg_goals_per_match, seasonStatsData?.avg_homegoals_per_match, seasonStatsData?.avg_redcards_per_match, seasonStatsData?.avg_yellowcards_per_match, seasonStatsData?.avg_yellowredcards_per_match, seasonStatsData?.draw_percentage, seasonStatsData?.goal_scored_every_minutes, seasonStatsData?.number_of_goals, seasonStatsData?.number_of_redcards, seasonStatsData?.number_of_yellowcards, seasonStatsData?.number_of_yellowredcards, seasonStatsData?.win_percentage.away, seasonStatsData?.win_percentage.home]);
+
   return (
     <>
       <Row justify="space-between" style={{ marginBottom: '16px'}}>
@@ -75,6 +146,7 @@ export default function Page({ params }: { params: { league_id: number }}) {
                     <span>{league.country.data.name}</span>
                   </div>
                   <div>
+                    <div style={{marginBottom: '-6px'}}>{seasonStats?.stats.data.number_of_matches_played} / {seasonStats?.stats.data.number_of_matches}試合が終了</div>
                     <Progress percent={seasonProgressPercentage} />
                   </div>
                 </div>
@@ -89,22 +161,46 @@ export default function Page({ params }: { params: { league_id: number }}) {
                 />
               </div>
             </div>
+            <div style={{ marginTop: '6px'}}>
+              <Tabs defaultActiveKey={selectedTab} size='large' items={tabItems} onChange={(key) => setSelectedTab(key as 'summary' | 'stats')} />
+            </div>
           </Card>: <Card loading />}
         </Col>
       </Row>
 
-      <Row justify="space-between">
-        <Col span={7}>
-          <Card bordered>
-            col-4
-          </Card>
-        </Col>
-        <Col span={16}>
-          <Card bordered>
-            col-4
-          </Card>
-        </Col>
-      </Row>
+      {selectedTab === 'summary' ?
+        <Row justify="space-between">
+          <Col span={24} md={7} style={{ marginBottom: '12px;'}}>
+            <Card bordered>
+              summary
+            </Card>
+          </Col>
+          <Col span={24} md={16}>
+            <Card bordered>
+              col-4
+            </Card>
+          </Col>
+        </Row>
+        :
+        <Row justify="space-between">
+          <Col span={24}>
+            <Card bordered>
+              <div>
+                <h1 style={{ fontSize: '18px', fontWeight: 'bold'}}>リーグスタッツ</h1>
+
+                {/* スタッツ一覧 */}
+                <Row gutter={10}>
+                  {seasonStatsItems.map(((seasonStatsItem, i) => {
+                    return <Col span={12} md={6} key={i} style={{ marginBottom: '8px'}}>
+                      <Statistic title={seasonStatsItem.label} value={seasonStatsItem.data} />
+                    </Col>;
+                  }))}
+                </Row>
+              </div>
+            </Card>
+          </Col>
+        </Row>
+      }
     </>
   );
 }
