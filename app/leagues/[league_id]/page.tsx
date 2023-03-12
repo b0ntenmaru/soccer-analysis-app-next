@@ -1,11 +1,12 @@
 "use client";
 
-import { Avatar, Card, Col, Progress, Row, Select } from '@/app/components/antd';
+import { Avatar, Card, Col, Progress, Row, Select, Tabs, TabsProps } from '@/app/components/antd';
 import { GetSeasonStatsByIdData, League } from '@/app/types';
 import styles from '@/app/leagues/[league_id]/page.module.css';
 import { useEffect, useMemo, useState } from 'react';
 import { getLeagueById } from '@/app/leagues/[league_id]/getLeagueById';
 import { getSeasonStatsBySeasonId } from '@/app/leagues/[league_id]/getSeasonStatsBySeasonId';
+import '@/app/leagues/[league_id]/antd_orverride.css';
 
 export default function Page({ params }: { params: { league_id: number }}) {
   const [league, setLeague] = useState<League | null>(null);
@@ -51,6 +52,19 @@ export default function Page({ params }: { params: { league_id: number }}) {
 
   }, [league]);
 
+  const [selectedTab, setSelectedTab] = useState<'summary' | 'stats'>('summary');
+
+  const tabItems: TabsProps['items'] = [
+    {
+      key: 'summary',
+      label: `サマリー`,
+    },
+    {
+      key: 'stats',
+      label: `スタッツ`,
+    },
+  ];
+
   return (
     <>
       <Row justify="space-between" style={{ marginBottom: '16px'}}>
@@ -82,14 +96,17 @@ export default function Page({ params }: { params: { league_id: number }}) {
                 />
               </div>
             </div>
+            <div style={{ marginTop: '6px'}}>
+              <Tabs defaultActiveKey={selectedTab} size='large' items={tabItems} onChange={(key) => setSelectedTab(key as 'summary' | 'stats')} />
+            </div>
           </Card>: <Card loading />}
         </Col>
       </Row>
 
-      <Row justify="space-between">
+      {selectedTab === 'summary' ? <Row justify="space-between">
         <Col span={7}>
           <Card bordered>
-            col-4
+            summary
           </Card>
         </Col>
         <Col span={16}>
@@ -97,7 +114,13 @@ export default function Page({ params }: { params: { league_id: number }}) {
             col-4
           </Card>
         </Col>
-      </Row>
+      </Row> : <Row justify="space-between">
+        <Col span={24}>
+          <Card bordered>
+            stats
+          </Card>
+        </Col>
+      </Row>}
     </>
   );
 }
