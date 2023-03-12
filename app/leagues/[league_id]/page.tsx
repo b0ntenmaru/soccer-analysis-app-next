@@ -1,30 +1,22 @@
 "use client";
+
 import { Avatar, Card, Col, Progress, Row, Select } from '@/app/components/antd';
 import { GetSeasonStatsByIdData, League } from '@/app/types';
 import styles from '@/app/leagues/[league_id]/page.module.css';
 import { useEffect, useMemo, useState } from 'react';
-
-const getLeague = async (leagueId: number) => {
-  const res = await fetch(`http://localhost:3000/api/leagues/${leagueId}`);
-  const data = await res.json();
-  return data as League;
-};
-
-const getSeasonStats = async (seasonId: number) => {
-  const res = await fetch(`http://localhost:3000/api/seasons/${seasonId}/stats`);
-  const data = await res.json();
-  return data as GetSeasonStatsByIdData;
-};
+import { getLeagueById } from '@/app/leagues/[league_id]/getLeagueById';
+import { getSeasonStatsBySeasonId } from '@/app/leagues/[league_id]/getSeasonStatsBySeasonId';
 
 export default function Page({ params }: { params: { league_id: number }}) {
   const [league, setLeague] = useState<League | null>(null);
   const [seasonStats, setSeasonStats] = useState<GetSeasonStatsByIdData | null>(null);
   const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
+
   useEffect(() => {
-    getLeague(params.league_id).then((leagueData) => {
+    getLeagueById(params.league_id).then((leagueData) => {
       setLeague(leagueData);
       setSelectedSeasonId(leagueData.current_season_id);
-      getSeasonStats(leagueData.current_season_id).then((seasonStatsData) => {
+      getSeasonStatsBySeasonId(leagueData.current_season_id).then((seasonStatsData) => {
         setSeasonStats(seasonStatsData);
       });
     });
@@ -32,7 +24,7 @@ export default function Page({ params }: { params: { league_id: number }}) {
 
   const handleChangeSeason = (value: number) => {
     setSelectedSeasonId(value);
-    getSeasonStats(value).then((seasonStatsData) => {
+    getSeasonStatsBySeasonId(value).then((seasonStatsData) => {
       setSeasonStats(seasonStatsData);
     });
   };
