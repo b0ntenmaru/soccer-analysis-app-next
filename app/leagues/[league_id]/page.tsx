@@ -109,7 +109,7 @@ export default function Page({ params }: { params: { league_id: number }}) {
 
       {selectedTab === 'summary' ?
         <Row justify="space-between">
-          <Col span={24} md={7} style={{ marginBottom: '12px;'}}>
+          <Col span={24} md={7} style={{ marginBottom: '12px'}}>
             { seasonStats ? <TopPlayerRanking seasonStats={seasonStats} /> : <Card loading />}
           </Col>
           <Col span={24} md={16}>

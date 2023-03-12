@@ -55,7 +55,7 @@ const TopPlayerRanking = (props: {seasonStats: GetSeasonStatsByIdData} ) => {
 
                 return (
                   <ul key={i} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px'}}>
-                    <li style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px;'}}>
+                    <li style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px'}}>
                       <span>
                         {position}
                       </span>
