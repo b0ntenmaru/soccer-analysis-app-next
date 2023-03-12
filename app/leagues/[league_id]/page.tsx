@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Card, Col, Progress, Radio, Row, Select, Statistic, Tabs, TabsProps } from '@/app/components/antd';
+import { Avatar, Card, Col, Progress, Row, Select, Tabs, TabsProps } from '@/app/components/antd';
 import { GetSeasonStatsByIdData, League } from '@/app/types';
 import styles from '@/app/leagues/[league_id]/page.module.css';
 import { useEffect, useMemo, useState } from 'react';
@@ -8,6 +8,8 @@ import { getLeagueById } from '@/app/leagues/[league_id]/getLeagueById';
 import { getSeasonStatsBySeasonId } from '@/app/leagues/[league_id]/getSeasonStatsBySeasonId';
 import '@/app/leagues/[league_id]/antd_orverride.css';
 import '@/app/leagues/[league_id]/page.css';
+import TopPlayerRanking from './components/TopPlayerRanking';
+import LeagueSeasonStats from './components/LeagueSeasonStats';
 
 export default function Page({ params }: { params: { league_id: number }}) {
   const [league, setLeague] = useState<League | null>(null);
@@ -66,73 +68,6 @@ export default function Page({ params }: { params: { league_id: number }}) {
     },
   ];
 
-  const seasonStatsData = useMemo(() => {
-    return seasonStats?.stats.data;
-  },[seasonStats?.stats.data]);
-
-  const seasonStatsItems = useMemo((): Array<{ label: string; data: string | number | undefined;}> => {
-    return [
-      {
-        label: '総得点数',
-        data: seasonStatsData?.number_of_goals
-      },
-      {
-        label: '1試合あたりの平均得点数',
-        data: seasonStatsData?.avg_goals_per_match
-      },
-      {
-        label: '1試合あたりのホーム平均得点数',
-        data: seasonStatsData?.avg_homegoals_per_match
-      },
-      {
-        label: '1試合あたりのアウェー平均得点数',
-        data: seasonStatsData?.avg_awaygoals_per_match
-      },
-      {
-        label: '1得点にかかる時間',
-        data: `${seasonStatsData?.goal_scored_every_minutes}分`
-      },
-      {
-        label: 'ホームチームの勝率',
-        data: `${seasonStatsData?.win_percentage.home}%`
-      },
-      {
-        label: 'アウェーチームの勝率',
-        data: `${seasonStatsData?.win_percentage.away}%`
-      },
-      {
-        label: '引き分け率',
-        data: `${seasonStatsData?.draw_percentage}%`
-      },
-      {
-        label: 'イエローカードの総数',
-        data: `${seasonStatsData?.number_of_yellowcards}枚`
-      },
-      {
-        label: '1試合あたりの平均イエローカード数',
-        data: `${seasonStatsData?.avg_yellowcards_per_match}枚`
-      },
-      {
-        label: '退場のきっかけとなるイエローカードの数',
-        data: `${seasonStatsData?.number_of_yellowredcards}枚`
-      },
-      {
-        label: '1試合あたりの退場のきっかけとなるイエローカード数の平均数',
-        data: `${seasonStatsData?.avg_yellowredcards_per_match}枚`
-      },
-      {
-        label: 'レッドカードの総数',
-        data: `${seasonStatsData?.number_of_redcards}枚`
-      },
-      {
-        label: '1試合あたりの平均レッドカード数',
-        data: `${seasonStatsData?.avg_redcards_per_match}枚`
-      }
-    ];
-  }, [seasonStatsData?.avg_awaygoals_per_match, seasonStatsData?.avg_goals_per_match, seasonStatsData?.avg_homegoals_per_match, seasonStatsData?.avg_redcards_per_match, seasonStatsData?.avg_yellowcards_per_match, seasonStatsData?.avg_yellowredcards_per_match, seasonStatsData?.draw_percentage, seasonStatsData?.goal_scored_every_minutes, seasonStatsData?.number_of_goals, seasonStatsData?.number_of_redcards, seasonStatsData?.number_of_yellowcards, seasonStatsData?.number_of_yellowredcards, seasonStatsData?.win_percentage.away, seasonStatsData?.win_percentage.home]);
-
-  const [selectedTopPlayerRanking, setSelectedTopPlayerRanking] = useState<'goal' | 'assist'>('goal');
-
   return (
     <>
       <Row justify="space-between" style={{ marginBottom: '16px'}}>
@@ -175,72 +110,7 @@ export default function Page({ params }: { params: { league_id: number }}) {
       {selectedTab === 'summary' ?
         <Row justify="space-between">
           <Col span={24} md={7} style={{ marginBottom: '12px;'}}>
-            { seasonStats ? <Card bordered>
-              <div>
-                <h1 style={{fontSize: '18px'}}>トップ選手</h1>
-                <div style={{textAlign: 'center', marginBottom: '8px'}}>
-                  <Radio.Group
-                    defaultValue={selectedTopPlayerRanking}
-                    buttonStyle="solid"
-                    size="small"
-                    onChange={
-                      (e) => setSelectedTopPlayerRanking(e.target.value)
-                    }
-                  >
-                    <Radio.Button value="goal">得点ランキング</Radio.Button>
-                    <Radio.Button value="assist">アシストランキング</Radio.Button>
-                  </Radio.Group>
-                </div>
-                {
-                selectedTopPlayerRanking === 'goal' ?
-                  <div>
-                    {
-                      seasonStats.aggregatedGoalscorers.data.map((rankingItem, i) => {
-                        const {position, player} = rankingItem;
-
-                        return (
-                          <ul key={i} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px'}}>
-                            <li style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px;'}}>
-                              <span>
-                                {position}
-                              </span>
-                              <span>
-                                <Avatar src={player.data.image_path} />
-                                {player.data.display_name}
-                              </span>
-                            </li>
-                            <li>{rankingItem.goals}</li>
-                          </ul>
-                        );
-                      })
-                    }
-                  </div>
-                  :
-                  <div>
-                    {
-                      seasonStats.aggregatedAssistscorers.data.map((rankingItem, i) => {
-                        const {position, player} = rankingItem;
-
-                        return (
-                          <ul key={i} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px'}}>
-                            <li style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px;'}}>
-                              <span>
-                                {position}
-                              </span>
-                              <span>
-                                <Avatar src={player.data.image_path} />
-                                {player.data.display_name}
-                              </span>
-                            </li>
-                            <li>{rankingItem.assists}</li>
-                          </ul>
-                        );
-                      })
-                    }
-                  </div>
-                }
-              </div>
-            </Card>: <Card loading />}
+            { seasonStats ? <TopPlayerRanking seasonStats={seasonStats} /> : <Card loading />}
           </Col>
           <Col span={24} md={16}>
             <Card bordered>
@@ -251,20 +121,16 @@ export default function Page({ params }: { params: { league_id: number }}) {
         :
         <Row justify="space-between">
           <Col span={24}>
-            <Card bordered>
+            {seasonStats ? <Card bordered>
               <div>
                 <h1 style={{ fontSize: '18px', fontWeight: 'bold'}}>リーグスタッツ</h1>
 
                 {/* スタッツ一覧 */}
                 <Row gutter={10}>
-                  {seasonStatsItems.map(((seasonStatsItem, i) => {
-                    return <Col span={12} md={6} key={i} style={{ marginBottom: '8px'}}>
-                      <Statistic title={seasonStatsItem.label} value={seasonStatsItem.data} />
-                    </Col>;
-                  }))}
+                  <LeagueSeasonStats seasonStats={seasonStats} />
                 </Row>
               </div>
-            </Card>
+            </Card>: <Card loading />}
           </Col>
         </Row>
       }
