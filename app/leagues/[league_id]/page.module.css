@@ -18,3 +18,14 @@
   align-items: center;
   gap: 6px;
 }
+
+@media (max-width:767px) {
+  .league_detail_header {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .league_profile {
+    flex-direction: column;
+  }
+}

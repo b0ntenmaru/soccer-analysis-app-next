@@ -103,24 +103,28 @@ export default function Page({ params }: { params: { league_id: number }}) {
         </Col>
       </Row>
 
-      {selectedTab === 'summary' ? <Row justify="space-between">
-        <Col span={7}>
-          <Card bordered>
-            summary
-          </Card>
-        </Col>
-        <Col span={16}>
-          <Card bordered>
-            col-4
-          </Card>
-        </Col>
-      </Row> : <Row justify="space-between">
-        <Col span={24}>
-          <Card bordered>
-            stats
-          </Card>
-        </Col>
-      </Row>}
+      {selectedTab === 'summary' ?
+        <Row justify="space-between">
+          <Col span={24} md={7} style={{ marginBottom: '12px;'}}>
+            <Card bordered>
+              summary
+            </Card>
+          </Col>
+          <Col span={24} md={16}>
+            <Card bordered>
+              col-4
+            </Card>
+          </Col>
+        </Row>
+        :
+        <Row justify="space-between">
+          <Col span={24}>
+            <Card bordered>
+              stats
+            </Card>
+          </Col>
+        </Row>
+      }
     </>
   );
 }
