@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, Card, Col, Progress, Row, Select, Tabs, TabsProps } from '@/app/components/antd';
-import { GetSeasonStatsByIdData, League } from '@/app/types';
+import { GetSeasonStatsByIdData, League, SeasonStandings } from '@/app/types';
 import styles from '@/app/leagues/[league_id]/page.module.css';
 import { useEffect, useMemo, useState } from 'react';
 import { getLeagueById } from '@/app/leagues/[league_id]/getLeagueById';
@@ -10,11 +10,13 @@ import '@/app/leagues/[league_id]/antd_orverride.css';
 import '@/app/leagues/[league_id]/page.css';
 import TopPlayerRanking from './components/TopPlayerRanking';
 import LeagueSeasonStats from './components/LeagueSeasonStats';
+import { getStandingsBySeasonId } from './getStandingsBySeasonId';
 
 export default function Page({ params }: { params: { league_id: number }}) {
   const [league, setLeague] = useState<League | null>(null);
   const [seasonStats, setSeasonStats] = useState<GetSeasonStatsByIdData | null>(null);
   const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
+  const [seasonStandings, setSeasonStandings] = useState<SeasonStandings | null>(null);
 
   useEffect(() => {
     getLeagueById(params.league_id).then((leagueData) => {
@@ -22,6 +24,10 @@ export default function Page({ params }: { params: { league_id: number }}) {
       setSelectedSeasonId(leagueData.current_season_id);
       getSeasonStatsBySeasonId(leagueData.current_season_id).then((seasonStatsData) => {
         setSeasonStats(seasonStatsData);
+      });
+
+      getStandingsBySeasonId(leagueData.current_season_id).then((seasonStandings) => {
+        setSeasonStandings(seasonStandings);
       });
     });
   },[params.league_id]);
@@ -109,13 +115,22 @@ export default function Page({ params }: { params: { league_id: number }}) {
 
       {selectedTab === 'summary' ?
         <Row justify="space-between">
+          {/* トップ選手 */}
           <Col span={24} md={7} style={{ marginBottom: '12px'}}>
             { seasonStats ? <TopPlayerRanking seasonStats={seasonStats} /> : <Card loading />}
           </Col>
+
+          {/* 順位表 */}
           <Col span={24} md={16}>
-            <Card bordered>
-              col-4
-            </Card>
+            { seasonStandings ?
+              (
+                <Card bordered>
+                  {JSON.stringify(seasonStandings)}
+                </Card>
+              ): (
+                <Card loading />
+              )
+            }
           </Col>
         </Row>
         :
