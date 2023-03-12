@@ -1,12 +1,13 @@
 "use client";
 
-import { Avatar, Card, Col, Progress, Row, Select, Statistic, Tabs, TabsProps } from '@/app/components/antd';
+import { Avatar, Card, Col, Progress, Radio, Row, Select, Statistic, Tabs, TabsProps } from '@/app/components/antd';
 import { GetSeasonStatsByIdData, League } from '@/app/types';
 import styles from '@/app/leagues/[league_id]/page.module.css';
 import { useEffect, useMemo, useState } from 'react';
 import { getLeagueById } from '@/app/leagues/[league_id]/getLeagueById';
 import { getSeasonStatsBySeasonId } from '@/app/leagues/[league_id]/getSeasonStatsBySeasonId';
 import '@/app/leagues/[league_id]/antd_orverride.css';
+import '@/app/leagues/[league_id]/page.css';
 
 export default function Page({ params }: { params: { league_id: number }}) {
   const [league, setLeague] = useState<League | null>(null);
@@ -130,6 +131,8 @@ export default function Page({ params }: { params: { league_id: number }}) {
     ];
   }, [seasonStatsData?.avg_awaygoals_per_match, seasonStatsData?.avg_goals_per_match, seasonStatsData?.avg_homegoals_per_match, seasonStatsData?.avg_redcards_per_match, seasonStatsData?.avg_yellowcards_per_match, seasonStatsData?.avg_yellowredcards_per_match, seasonStatsData?.draw_percentage, seasonStatsData?.goal_scored_every_minutes, seasonStatsData?.number_of_goals, seasonStatsData?.number_of_redcards, seasonStatsData?.number_of_yellowcards, seasonStatsData?.number_of_yellowredcards, seasonStatsData?.win_percentage.away, seasonStatsData?.win_percentage.home]);
 
+  const [selectedTopPlayerRanking, setSelectedTopPlayerRanking] = useState<'goal' | 'assist'>('goal');
+
   return (
     <>
       <Row justify="space-between" style={{ marginBottom: '16px'}}>
@@ -171,9 +174,72 @@ export default function Page({ params }: { params: { league_id: number }}) {
       {selectedTab === 'summary' ?
         <Row justify="space-between">
           <Col span={24} md={7} style={{ marginBottom: '12px;'}}>
-            <Card bordered>
-              summary
-            </Card>
+            { seasonStats ? <Card bordered>
+              <div>
+                <h1 style={{fontSize: '18px'}}>トップ選手</h1>
+                <div style={{textAlign: 'center', marginBottom: '8px'}}>
+                  <Radio.Group
+                    defaultValue={selectedTopPlayerRanking}
+                    buttonStyle="solid"
+                    size="small"
+                    onChange={
+                      (e) => setSelectedTopPlayerRanking(e.target.value)
+                    }
+                  >
+                    <Radio.Button value="goal">得点ランキング</Radio.Button>
+                    <Radio.Button value="assist">アシストランキング</Radio.Button>
+                  </Radio.Group>
+                </div>
+                {
+                selectedTopPlayerRanking === 'goal' ?
+                  <div>
+                    {
+                      seasonStats.aggregatedGoalscorers.data.map((rankingItem, i) => {
+                        const {position, player} = rankingItem;
+
+                        return (
+                          <ul key={i} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px'}}>
+                            <li style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px;'}}>
+                              <span>
+                                {position}
+                              </span>
+                              <span>
+                                <Avatar src={player.data.image_path} />
+                                {player.data.display_name}
+                              </span>
+                            </li>
+                            <li>{rankingItem.goals}</li>
+                          </ul>
+                        );
+                      })
+                    }
+                  </div>
+                  :
+                  <div>
+                    {
+                      seasonStats.aggregatedAssistscorers.data.map((rankingItem, i) => {
+                        const {position, player} = rankingItem;
+
+                        return (
+                          <ul key={i} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px'}}>
+                            <li style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px;'}}>
+                              <span>
+                                {position}
+                              </span>
+                              <span>
+                                <Avatar src={player.data.image_path} />
+                                {player.data.display_name}
+                              </span>
+                            </li>
+                            <li>{rankingItem.assists}</li>
+                          </ul>
+                        );
+                      })
+                    }
+                  </div>
+                }
+              </div>
+            </Card>: <Card loading />}
           </Col>
           <Col span={24} md={16}>
             <Card bordered>
