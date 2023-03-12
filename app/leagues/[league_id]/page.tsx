@@ -67,6 +67,7 @@ export default function Page({ params }: { params: { league_id: number }}) {
                     <span>{league.country.data.name}</span>
                   </div>
                   <div>
+                    <div style={{marginBottom: '-6px'}}>{seasonStats?.stats.data.number_of_matches_played} / {seasonStats?.stats.data.number_of_matches}試合が終了</div>
                     <Progress percent={seasonProgressPercentage} />
                   </div>
                 </div>
