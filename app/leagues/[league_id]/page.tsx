@@ -11,12 +11,13 @@ import '@/app/leagues/[league_id]/page.css';
 import TopPlayerRanking from './components/TopPlayerRanking';
 import LeagueSeasonStats from './components/LeagueSeasonStats';
 import { getStandingsBySeasonId } from './getStandingsBySeasonId';
+import StandingsTable from './components/StandingsTable';
 
 export default function Page({ params }: { params: { league_id: number }}) {
   const [league, setLeague] = useState<League | null>(null);
   const [seasonStats, setSeasonStats] = useState<GetSeasonStatsByIdData | null>(null);
   const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
-  const [seasonStandings, setSeasonStandings] = useState<SeasonStandings | null>(null);
+  const [seasonStandings, setSeasonStandings] = useState<Array<SeasonStandings> | null>(null);
 
   useEffect(() => {
     getLeagueById(params.league_id).then((leagueData) => {
@@ -36,6 +37,9 @@ export default function Page({ params }: { params: { league_id: number }}) {
     setSelectedSeasonId(value);
     getSeasonStatsBySeasonId(value).then((seasonStatsData) => {
       setSeasonStats(seasonStatsData);
+    });
+    getStandingsBySeasonId(value).then((seasonStandings) => {
+      setSeasonStandings(seasonStandings);
     });
   };
 
@@ -124,9 +128,12 @@ export default function Page({ params }: { params: { league_id: number }}) {
           <Col span={24} md={16}>
             { seasonStandings ?
               (
-                <Card bordered>
-                  {JSON.stringify(seasonStandings)}
-                </Card>
+                seasonStandings.map((seasonStandingsItem, i) => {
+                  return <Card bordered key={i} style={{ marginBottom: '16px'}}>
+                    <h1>{seasonStandingsItem.name}</h1>
+                    <StandingsTable standingsData={seasonStandingsItem.standings.data} />
+                  </Card>;
+                })
               ): (
                 <Card loading />
               )

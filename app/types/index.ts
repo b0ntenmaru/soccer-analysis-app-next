@@ -392,7 +392,7 @@ export type SeasonStandings = {
   }
 };
 
-type Standings = {
+export type Standings = {
   position: number;
   team_id: number;
   team_name: string;

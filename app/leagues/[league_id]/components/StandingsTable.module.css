@@ -1,0 +1,76 @@
+
+@media (max-width:767px) {
+  .mobile_display_none {
+    display: none;
+  }
+
+  .td_recent_form {
+    display: none !important;
+  }
+}
+
+.standings_table_row {
+  cursor: pointer;
+}
+
+.standings_table_row:hover {
+  background: rgb(237, 237, 237);
+}
+
+.td_recent_form {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.recent_form_item {
+  width: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.relegation {
+  background: rgb(193, 38, 45);;
+  color: #fff;
+  width: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 29px;
+  padding: 1px 2px;
+}
+
+.champions_league {
+  background: rgb(21 104 177);
+  color: #fff;
+  width: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 29px;
+  padding: 1px 2px;
+}
+
+.europa_league {
+  background: rgb(177 136 21);
+  color: #fff;
+  width: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 29px;
+  padding: 1px 2px;
+}
+
+.position {
+  width: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 29px;
+  padding: 1px 2px;
+}
