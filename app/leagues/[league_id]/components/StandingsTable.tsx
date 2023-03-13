@@ -11,7 +11,7 @@ const StandingsTable = (props: { standingsData: Array<Standings>}) => {
         <tr>
           <th style={{textAlign: 'left'}}>#</th>
           <th style={{width: '40%', textAlign: 'left'}}>チーム名</th>
-          <th style={{textAlign: 'left'}}>試合数</th>
+          <th style={{textAlign: 'center'}}>試合数</th>
           <th style={{textAlign: 'left'}}>勝</th>
           <th style={{textAlign: 'left'}}>分</th>
           <th style={{textAlign: 'left'}}>負</th>
@@ -30,7 +30,7 @@ const StandingsTable = (props: { standingsData: Array<Standings>}) => {
               <Avatar src={standings.team.data.logo_path} size='small' />
               {standings.team.data.name}
             </td>
-            <td>{standings.overall.games_played}</td>
+            <td style={{textAlign: 'center'}}>{standings.overall.games_played}</td>
             <td>{standings.overall.won}</td>
             <td>{standings.overall.draw}</td>
             <td>{standings.overall.lost}</td>
