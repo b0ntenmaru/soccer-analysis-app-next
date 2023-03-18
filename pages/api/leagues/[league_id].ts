@@ -1,14 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { League } from '@/app/types';
+import { connectSportmonksApiV2 } from '@/app/api/connectSportmonksApiV2';
 
-const apiV1Path = process.env.API_V1_PATH;
-const apiKey = process.env.API_KEY;
+const { apiV2Path, apiKey } = connectSportmonksApiV2();
 
 const getLeagueById = async (args: { leagueId: string; include?: Array<string> }): Promise<League> => {
   const include = args.include?.join(',');
 
   const response = await fetch(
-    `${apiV1Path}/leagues/${args.leagueId}?api_token=${apiKey}&include=${include}`
+    `${apiV2Path}/leagues/${args.leagueId}?api_token=${apiKey}&include=${include}`
   );
   const res = await response.json();
   return res.data;
