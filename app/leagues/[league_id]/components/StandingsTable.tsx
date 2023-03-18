@@ -1,6 +1,7 @@
 import { Avatar, Tooltip } from "@/app/components/antd";
 import { Standings } from "@/app/types";
 import styles from '@/app/leagues/[league_id]/components/StandingsTable.module.css';
+import Link from 'next/link';
 
 const StandingsTable = (props: { standingsData: Array<Standings>}) => {
   const { standingsData } = props;
@@ -27,8 +28,10 @@ const StandingsTable = (props: { standingsData: Array<Standings>}) => {
               <Position result={standings.result} position={standings.position} />
             </td>
             <td>
-              <Avatar src={standings.team.data.logo_path} size='small' />
-              {standings.team.data.name}
+              <Link href={`/teams/${standings.team_id}`}>
+                <Avatar src={standings.team.data.logo_path} size='small' />
+                {standings.team.data.name}
+              </Link>
             </td>
             <td style={{textAlign: 'center'}}>{standings.overall.games_played}</td>
             <td>{standings.overall.won}</td>
