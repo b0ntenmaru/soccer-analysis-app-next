@@ -1,13 +1,19 @@
-import '@/app/leagues/[league_id]/antd_orverride.css';
-import '@/app/leagues/[league_id]/page.css';
+import { Team } from '@/app/types';
+import TeamUi from '@/app/teams/[team_id]/components/TeamUi';
 
+const getTeamById = async (teamId: number) => {
+  const res = await fetch(`http://localhost:3000/api/v3/teams/${teamId}`);
+  const data = await res.json();
+  return data as Team;
+};
 
-export default function Page({ params }: { params: { team_id: number }}) {
+export default async function Page({ params }: { params: { team_id: number }}) {
   const teamId = params.team_id;
+  const team = await getTeamById(teamId);
 
   return (
     <>
-      teamId: {teamId}
+      <TeamUi team={team} />
     </>
   );
 }
