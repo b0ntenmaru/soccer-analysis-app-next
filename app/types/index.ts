@@ -1,4 +1,4 @@
-
+export * from './Team';
 
 export type League = {
   id: number;
