@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { GetSeasonStatsByIdData } from '@/app/types';
+import { connectSportmonksApiV2 } from '@/app/api/connectSportmonksApiV2';
 
-const apiV1Path = process.env.API_V1_PATH;
-const apiKey = process.env.API_KEY;
+const { apiV2Path, apiKey } = connectSportmonksApiV2();
 
 const getSeasonStatsById = async (args: { seasonId: string }): Promise<GetSeasonStatsByIdData> => {
   type StatsQuery = `stats.${string}`;
@@ -23,7 +23,7 @@ const includeQuery = `stats,${aggregatedGoalscorersQuery},${aggregatedAssistscor
   const { seasonId } = args;
 
   const response: any = await fetch(
-    `${apiV1Path}/seasons/${seasonId}?api_token=${apiKey}&include=${includeQuery}`
+    `${apiV2Path}/seasons/${seasonId}?api_token=${apiKey}&include=${includeQuery}`
   );
   const responseJson = await response.json();
   return responseJson.data;

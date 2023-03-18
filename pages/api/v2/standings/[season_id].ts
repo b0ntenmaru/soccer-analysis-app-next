@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { SeasonStandings } from '@/app/types';
+import { connectSportmonksApiV2 } from '@/app/api/connectSportmonksApiV2';
 
-const apiV1Path = process.env.API_V1_PATH;
-const apiKey = process.env.API_KEY;
+const { apiV2Path, apiKey } = connectSportmonksApiV2();
 
 export const getStandingsBySeasonId = async (seasonId: number): Promise<Array<SeasonStandings>> => {
-  const response: any = await fetch(`${apiV1Path}/standings/season/${seasonId}?api_token=${apiKey}&include=standings.team,`);
+  const response: any = await fetch(`${apiV2Path}/standings/season/${seasonId}?api_token=${apiKey}&include=standings.team,`);
   const resJson = await response.json();
   return resJson.data;
 };
