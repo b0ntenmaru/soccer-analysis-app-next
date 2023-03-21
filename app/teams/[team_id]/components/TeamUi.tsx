@@ -5,6 +5,10 @@ import styles from '@/app/teams/[team_id]/page.module.css';
 import { SeasonStandings } from '@/app/types';
 import StandingsTable from '@/app/leagues/[league_id]/components/StandingsTable';
 
+/**
+ * 本来順位表オブジェクトもページオブジェクトとしてteamに組み込みたいが、
+ * teamRankingListに関してはAPIv2から取得した値であるため後で差し替えやすくしておきたいためページオブジェクトとは別で渡す
+ */
 const TeamUi = (props: { team: Team, teamRankingList: Array<Array<SeasonStandings>> }) => {
 
   const { team, teamRankingList } = props;
