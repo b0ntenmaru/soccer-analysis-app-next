@@ -1,5 +1,3 @@
-export * from './Team';
-
 export type League = {
   id: number;
   active: boolean;
