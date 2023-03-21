@@ -435,6 +435,9 @@ export type Standings = {
   status: string | null,
   team: {
     data: StandingsTeamData
+  },
+  league: {
+    data: League
   }
 }
 

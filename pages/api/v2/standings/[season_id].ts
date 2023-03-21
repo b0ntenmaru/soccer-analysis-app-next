@@ -5,7 +5,7 @@ import { connectSportmonksApiV2 } from '@/app/api/connectSportmonksApiV2';
 const { apiV2Path, apiKey } = connectSportmonksApiV2();
 
 export const getStandingsBySeasonId = async (seasonId: number): Promise<Array<SeasonStandings>> => {
-  const response: any = await fetch(`${apiV2Path}/standings/season/${seasonId}?api_token=${apiKey}&include=standings.team,`);
+  const response: any = await fetch(`${apiV2Path}/standings/season/${seasonId}?api_token=${apiKey}&include=standings.team,standings.league`);
   const resJson = await response.json();
   return resJson.data;
 };
