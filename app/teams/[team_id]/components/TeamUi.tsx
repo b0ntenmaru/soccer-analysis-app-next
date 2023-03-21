@@ -36,16 +36,23 @@ const TeamUi = (props: { team: Team, teamRankingList: Array<Array<SeasonStanding
       <Row justify="space-between">
 
           <Col span={24} md={7} style={{ marginBottom: '12px'}}>
-            <Card bordered>あああ</Card>
+            <Card bordered>
+              {team.activeseasons.map(season => {
+                return <div key={season.id}>{season.id}</div>;
+              })}
+            </Card>
           </Col>
 
           {/* 順位表 */}
           <Col span={24} md={16}>
             {teamRankingList.map((teamRanking => {
               return teamRanking.map((teamRankingItem, i) => {
-                return <Card key={i} bordered style={{marginBottom: '16px'}}>
-                  <StandingsTable standingsData={teamRankingItem.standings.data} />
-                </Card>;
+                if(teamRankingItem.standings.data.some(d => d.team.data.id === team.id)) {
+                  return <Card key={i} bordered style={{marginBottom: '16px'}}>
+                    <h1>{teamRankingItem.standings.data[0].league.data.name}</h1>
+                    <StandingsTable standingsData={teamRankingItem.standings.data} />
+                  </Card>;
+                }
               });
             }))}
           </Col>
