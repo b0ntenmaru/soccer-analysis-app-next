@@ -1,6 +1,6 @@
 import { Avatar, Card, Radio } from '@/app/components/antd';
 import { useState } from 'react';
-import { GetSeasonStatsByIdData } from '@/app/types';
+import { GetSeasonStatsByIdData } from '@/app/types/api_v2';
 
 const TopPlayerRanking = (props: {seasonStats: GetSeasonStatsByIdData} ) => {
   const { seasonStats } = props;

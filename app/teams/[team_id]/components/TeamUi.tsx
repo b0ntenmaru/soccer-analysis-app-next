@@ -2,7 +2,7 @@
 import { Team } from '@/app/types/api_v3';
 import { Row, Col, Card, Avatar } from "antd";
 import styles from '@/app/teams/[team_id]/page.module.css';
-import { SeasonStandings } from '@/app/types';
+import { SeasonStandings } from '@/app/types/api_v2';
 import StandingsTable from '@/app/leagues/[league_id]/components/StandingsTable';
 
 /**

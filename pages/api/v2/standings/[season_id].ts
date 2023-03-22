@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { SeasonStandings } from '@/app/types';
+import { SeasonStandings } from '@/app/types/api_v2';
 import { connectSportmonksApiV2 } from '@/app/api/connectSportmonksApiV2';
 
 const { apiV2Path, apiKey } = connectSportmonksApiV2();

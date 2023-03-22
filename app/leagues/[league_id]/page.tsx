@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, Card, Col, Progress, Row, Select, Tabs, TabsProps } from '@/app/components/antd';
-import { GetSeasonStatsByIdData, League, SeasonStandings } from '@/app/types';
+import { GetSeasonStatsByIdData, League, SeasonStandings } from '@/app/types/api_v2';
 import styles from '@/app/leagues/[league_id]/page.module.css';
 import { useEffect, useMemo, useState } from 'react';
 import { getLeagueById } from '@/app/leagues/[league_id]/getLeagueById';
