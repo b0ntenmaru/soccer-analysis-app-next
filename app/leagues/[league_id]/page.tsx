@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, Card, Col, Progress, Row, Select, Tabs, TabsProps } from '@/app/components/antd';
-import { GetSeasonStatsByIdData, League, SeasonStandings } from '@/app/types/api_v2';
+import { LeagueSeasonStats, League, SeasonStandings } from '@/app/types/api_v2';
 import styles from '@/app/leagues/[league_id]/page.module.css';
 import { useEffect, useMemo, useState } from 'react';
 import { getLeagueById } from '@/app/leagues/[league_id]/getLeagueById';
@@ -9,13 +9,13 @@ import { getSeasonStatsBySeasonId } from '@/app/leagues/[league_id]/getSeasonSta
 import '@/app/leagues/[league_id]/antd_orverride.css';
 import '@/app/leagues/[league_id]/page.css';
 import TopPlayerRanking from './components/TopPlayerRanking';
-import LeagueSeasonStats from './components/LeagueSeasonStats';
+import LeagueSeasonStatsComponent from './components/LeagueSeasonStats';
 import { getStandingsBySeasonId } from './getStandingsBySeasonId';
 import StandingsTable from './components/StandingsTable';
 
 export default function Page({ params }: { params: { league_id: number }}) {
   const [league, setLeague] = useState<League | null>(null);
-  const [seasonStats, setSeasonStats] = useState<GetSeasonStatsByIdData | null>(null);
+  const [seasonStats, setSeasonStats] = useState<LeagueSeasonStats | null>(null);
   const [selectedSeasonId, setSelectedSeasonId] = useState<number | null>(null);
   const [seasonStandings, setSeasonStandings] = useState<Array<SeasonStandings> | null>(null);
 
@@ -149,7 +149,7 @@ export default function Page({ params }: { params: { league_id: number }}) {
 
                 {/* スタッツ一覧 */}
                 <Row gutter={10}>
-                  <LeagueSeasonStats seasonStats={seasonStats} />
+                  <LeagueSeasonStatsComponent seasonStats={seasonStats} />
                 </Row>
               </div>
             </Card>: <Card loading />}
