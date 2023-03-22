@@ -65,19 +65,6 @@ export default function Page({ params }: { params: { league_id: number }}) {
 
   }, [league]);
 
-  const [selectedTab, setSelectedTab] = useState<'summary' | 'stats'>('summary');
-
-  const tabItems: TabsProps['items'] = [
-    {
-      key: 'summary',
-      label: `サマリー`,
-    },
-    {
-      key: 'stats',
-      label: `スタッツ`,
-    },
-  ];
-
   return (
     <>
       <Row justify="space-between" style={{ marginBottom: '16px'}}>
@@ -110,52 +97,47 @@ export default function Page({ params }: { params: { league_id: number }}) {
                 />
               </div>
             </div>
-            <div style={{ marginTop: '6px'}}>
-              <Tabs defaultActiveKey={selectedTab} size='large' items={tabItems} onChange={(key) => setSelectedTab(key as 'summary' | 'stats')} />
+          </Card>: <Card loading />}
+        </Col>
+      </Row>
+
+      <Row justify="space-between" style={{ marginBottom: '16px'}}>
+        <Col span={24}>
+          {seasonStats ? <Card bordered>
+            <div>
+              <h1 style={{ fontSize: '18px', fontWeight: 'bold'}}>リーグスタッツ</h1>
+
+              {/* スタッツ一覧 */}
+              <Row gutter={10}>
+                <LeagueSeasonStatsComponent seasonStats={seasonStats} />
+              </Row>
             </div>
           </Card>: <Card loading />}
         </Col>
       </Row>
 
-      {selectedTab === 'summary' ?
-        <Row justify="space-between">
-          {/* トップ選手 */}
-          <Col span={24} md={7} style={{ marginBottom: '12px'}}>
-            { seasonStats ? <TopPlayerRanking seasonStats={seasonStats} /> : <Card loading />}
-          </Col>
+      <Row justify="space-between">
+        {/* トップ選手 */}
+        <Col span={24} md={7} style={{ marginBottom: '12px'}}>
+          { seasonStats ? <TopPlayerRanking seasonStats={seasonStats} /> : <Card loading />}
+        </Col>
 
-          {/* 順位表 */}
-          <Col span={24} md={16}>
-            { seasonStandings ?
-              (
-                seasonStandings.map((seasonStandingsItem, i) => {
-                  return <Card bordered key={i} style={{ marginBottom: '16px'}}>
-                    <h1>{seasonStandingsItem.name}</h1>
-                    <StandingsTable standingsData={seasonStandingsItem.standings.data} />
-                  </Card>;
-                })
-              ): (
-                <Card loading />
-              )
-            }
-          </Col>
-        </Row>
-        :
-        <Row justify="space-between">
-          <Col span={24}>
-            {seasonStats ? <Card bordered>
-              <div>
-                <h1 style={{ fontSize: '18px', fontWeight: 'bold'}}>リーグスタッツ</h1>
-
-                {/* スタッツ一覧 */}
-                <Row gutter={10}>
-                  <LeagueSeasonStatsComponent seasonStats={seasonStats} />
-                </Row>
-              </div>
-            </Card>: <Card loading />}
-          </Col>
-        </Row>
-      }
+        {/* 順位表 */}
+        <Col span={24} md={16}>
+          { seasonStandings ?
+            (
+              seasonStandings.map((seasonStandingsItem, i) => {
+                return <Card bordered key={i} style={{ marginBottom: '16px'}}>
+                  <h1>{seasonStandingsItem.name}</h1>
+                  <StandingsTable standingsData={seasonStandingsItem.standings.data} />
+                </Card>;
+              })
+            ): (
+              <Card loading />
+            )
+          }
+        </Col>
+      </Row>
     </>
   );
 }
