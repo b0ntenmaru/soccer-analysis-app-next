@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { GetSeasonStatsByIdData } from '@/app/types';
+import { LeagueSeasonStats } from '@/app/types/api_v2';
 import { connectSportmonksApiV2 } from '@/app/api/connectSportmonksApiV2';
 
 const { apiV2Path, apiKey } = connectSportmonksApiV2();
 
-const getSeasonStatsById = async (args: { seasonId: string }): Promise<GetSeasonStatsByIdData> => {
+const getSeasonStatsById = async (args: { seasonId: string }): Promise<LeagueSeasonStats> => {
   type StatsQuery = `stats.${string}`;
   const aggregatedGoalscorersQuery = 'aggregatedGoalscorers:limit(10|1).player.team';
   const aggregatedAssistscorersQuery = 'aggregatedAssistscorers:limit(10|1).player.team';

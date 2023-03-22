@@ -1,8 +1,8 @@
 import { Col, Statistic } from "@/app/components/antd";
-import { GetSeasonStatsByIdData } from "@/app/types";
+import { LeagueSeasonStats } from "@/app/types/api_v2";
 import { useMemo } from "react";
 
-const LeagueSeasonStats = (props: { seasonStats: GetSeasonStatsByIdData }) => {
+const LeagueSeasonStats = (props: { seasonStats: LeagueSeasonStats }) => {
   const { seasonStats } = props;
 
   const seasonStatsData = useMemo(() => {

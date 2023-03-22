@@ -1,5 +1,5 @@
 import { Avatar, Tooltip } from "@/app/components/antd";
-import { Standings } from "@/app/types";
+import { Standings } from "@/app/types/api_v2";
 import styles from '@/app/leagues/[league_id]/components/StandingsTable.module.css';
 import Link from 'next/link';
 
