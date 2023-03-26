@@ -1,4 +1,4 @@
-import LeagueUi from './LeagueUI';
+import LeagueUi from '@/app/leagues/[league_id]/LeagueUi';
 import { getLeagueById } from '@/app/leagues/[league_id]/getLeagueById';
 import { getSeasonStatsBySeasonId } from '@/app/leagues/[league_id]/getSeasonStatsBySeasonId';
 import { getStandingsBySeasonId } from './getStandingsBySeasonId';
