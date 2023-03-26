@@ -1,36 +1,29 @@
 "use client";
 
+import { useMemo } from 'react';
+import { Avatar, Card, Col, Progress, Row, Select } from '@/app/components/antd';
 import '@/app/leagues/[league_id]/antd_orverride.css';
 import '@/app/leagues/[league_id]/page.css';
-import { Avatar, Card, Col, Progress, Row, Select } from '@/app/components/antd';
 import styles from '@/app/leagues/[league_id]/page.module.css';
 import { LeagueSeasonStats, League, SeasonStandings } from '@/app/types/api_v2';
-import { useMemo, useState } from 'react';
 import LeagueSeasonStatsComponent from './components/LeagueSeasonStats';
 import TopPlayerRanking from './components/TopPlayerRanking';
 import StandingsTable from './components/StandingsTable';
+import { useSearchParams } from 'next/navigation';
 
 const LeagueUi = (props: {
-  league: League,
-  seasonStats: LeagueSeasonStats,
-  seasonStandings: Array<SeasonStandings>
-}) => {
-
+    league: League,
+    seasonStats: LeagueSeasonStats,
+    seasonStandings: Array<SeasonStandings>,
+  }) => {
   const { league, seasonStats, seasonStandings } = props;
 
-  const [selectedSeasonId, setSelectedSeasonId] = useState<number>(league.current_season_id);
-
   const seasonProgressPercentage = useMemo(()=> {
-    if (seasonStats === null) { return; }
-
     const statsData = seasonStats.stats.data;
     return Math.round((statsData.number_of_matches_played / statsData.number_of_matches) * 100);
   }, [seasonStats]);
 
   const displaySeasons = useMemo(() => {
-    if (league === null) {
-      return;
-    }
     const seasons =league.seasons.data.map(season => {
       return {
         value: season.id,
@@ -39,26 +32,18 @@ const LeagueUi = (props: {
     });
 
     return seasons.reverse();
-
   }, [league]);
 
-  /**
-   * TODO: シーズン変更時のロジック
-   */
   const handleChangeSeason = (value: number) => {
-    // setSelectedSeasonId(value);
-    // getSeasonStatsBySeasonId(value).then((seasonStatsData) => {
-    //   setSeasonStats(seasonStatsData);
-    // });
-    // getStandingsBySeasonId(value).then((seasonStandings) => {
-    //   setSeasonStandings(seasonStandings);
-    // });
-
-    console.log(value);
+    window.location.href = `/leagues/${league.id}?season_id=${value}`;
   };
+
+  const searchParams = useSearchParams();
+  const seasonId = searchParams?.get('season_id');
 
   return (
     <>
+    {seasonId}
       <Row justify="space-between" style={{ marginBottom: '16px'}}>
         <Col span={24}>
           <Card bordered>
@@ -73,7 +58,7 @@ const LeagueUi = (props: {
                     <span>{league.country.data.name}</span>
                   </div>
                   <div>
-                    <div style={{marginBottom: '-6px'}}>{seasonStats?.stats.data.number_of_matches_played} / {seasonStats?.stats.data.number_of_matches}試合が終了</div>
+                    <div style={{marginBottom: '-6px'}}>{seasonStats.stats.data.number_of_matches_played} / {seasonStats.stats.data.number_of_matches}試合が終了</div>
                     <Progress percent={seasonProgressPercentage} />
                   </div>
                 </div>
@@ -81,7 +66,7 @@ const LeagueUi = (props: {
 
               <div>
                 <Select
-                  defaultValue={selectedSeasonId}
+                  defaultValue={seasonId ? Number(seasonId): league.current_season_id}
                   style={{ width: 140 }}
                   options={displaySeasons}
                   onChange={(e) => handleChangeSeason(e)}
@@ -95,7 +80,7 @@ const LeagueUi = (props: {
 
       <Row justify="space-between" style={{ marginBottom: '16px'}}>
         <Col span={24}>
-          {seasonStats ? <Card bordered>
+          <Card bordered>
             <div>
               <h1 style={{ fontSize: '18px', fontWeight: 'bold'}}>リーグスタッツ</h1>
 
@@ -104,14 +89,14 @@ const LeagueUi = (props: {
                 <LeagueSeasonStatsComponent seasonStats={seasonStats} />
               </Row>
             </div>
-          </Card>: <Card loading />}
+          </Card>
         </Col>
       </Row>
 
       <Row justify="space-between">
         {/* トップ選手 */}
         <Col span={24} md={7} style={{ marginBottom: '12px'}}>
-          { seasonStats ? <TopPlayerRanking seasonStats={seasonStats} /> : <Card loading />}
+          <TopPlayerRanking seasonStats={seasonStats} />
         </Col>
 
         {/* 順位表 */}
