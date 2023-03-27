@@ -43,7 +43,6 @@ const LeagueUi = (props: {
 
   return (
     <>
-    {seasonId}
       <Row justify="space-between" style={{ marginBottom: '16px'}}>
         <Col span={24}>
           <Card bordered>
